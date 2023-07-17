@@ -1,41 +1,31 @@
-# Project Title
-
-Simple overview of use/purpose.
+# DEGENTOKEN | USING AVAX
+This is the project submission of module 4 of the `ETH_AVAX` course provided by `Metacrafters`.
 
 ## Description
 
-An in-depth paragraph about your project and overview of use.
+In this project, I created a token named `DEGEN` and the symbol `DGN`. This token is built to reward players in a game which can be redeemed in `GameShop` to buy exclusive game items. Also, it is created to be deployed on AVALANCHE Blockchain.
 
 ## Getting Started
 
 ### Installing
 
-* How/where to download your program
-* Any modifications needed to be made to files/folders
+- Fork this repository and clone it into your workspace.
+- You have to install all necessary dependencies by using the `npm i` command.
+- You need to have some AVAX tokens in your account to deploy the contract. (You can refer to `GUIDE.md`)
 
 ### Executing program
 
-* How to run the program
-* Step-by-step bullets
+Before executing make sure you have your own credentials and meta mask account to interact with the contract. Create your own `.env` file and add `PRIVATE_KEY` and `API_KEY` into it. After all this setup, you need to deploy the contract on a `fuji` network. You can use this command-
 ```
-code blocks for commands
+npx hardhat run scripts/deploy.js --network fuji
 ```
 
 ## Help
 
-Any advise for common problems or issues.
-```
-command to run if program contains helper info
-```
+Make sure you've switched to the `AVALANCHE FUJI-C Chain network on Metamask. (refer to GUIDE.md)
 
 ## Authors
 
-Contributors names and contact info
-
-ex. Dominique Pizzie  
-ex. [@DomPizzie](https://twitter.com/dompizzie)
+This contract is created by `UDIT GUPTA` with the help of `METACRAFTERS Team`.
 
 
-## License
-
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
