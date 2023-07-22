@@ -1,79 +1,93 @@
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "hardhat/console.sol";
 
-// 1. Minting new tokens: The platform should be able to create new tokens and distribute them to players as rewards. 
-// (Only the owner can mint tokens).
-// 2. Transferring tokens: Players should be able to transfer their tokens to others.
-// 3. Redeeming tokens: Players should be able to redeem their tokens for items in the in-game store.
-// 4. Checking token balance: Players should be able to check their token balance at any time.
-// 5. Burning tokens: Anyone should be able to burn tokens, that they own, that are no longer needed.
+// 1. To mint tokens = _mint()
+// 2. To transfer tokens = _transfer()
+// 3. To burn tokens = _burn()
+
+contract DegenToken is ERC20 {
+
+    string public tokenName = "DEGEN TOKEN";
+    string public tokenSymbol = "DGN";
+    mapping (address => string[]) purchases;
+    address public owner;
 
 
+    constructor() ERC20(tokenName, tokenSymbol){
+        _mint(msg.sender, 10000);
+        owner = msg.sender;
+    }
 
-contract DegenToken is ERC20, Ownable, ERC20Burnable {
+    modifier onlyOwner{
+        require(msg.sender == owner, "Sorry! only owner can mint tokens!");
+        _;
+    }
 
-    constructor() ERC20("Degen", "DGN") {}
+    // Mint function
+    function mintTokens(address _receiver, uint256 _tokens) public onlyOwner{
+        require(_receiver != address(0), "This address doesn't exist");
+        require(_tokens > 0, "You can't mint negative number of tokens");
+        _mint(_receiver, _tokens);
+    }
 
-        // Mint function
-        function mintTokens(address to, uint256 amount) public onlyOwner{
-            _mint(to, amount);
+    // Game Shop
+    function shopItems() public pure returns(string memory) {
+        return "1. M416 SKIN [800 DGN] 2. AKM SKIN [600 DGN] 3. UMP45 SKIN [250 DGN] 4. MYTHIC OUTFIT [175 DGN]";
+    }
+
+    // Function to redeem tokens
+    function redeemTokens(uint _ch) external{
+        require(_ch <= 4,"Wrong option selected!");
+
+        if(_ch == 1){
+            require(balanceOf(msg.sender)>=800, "Oops! Insufficient Tokens");
+            _burn(msg.sender, 800);
+            purchases[msg.sender].push("M416 SKIN");
         }
 
-        // Transfer Tokens Function
-        function transferTokens(address _reciever, uint amount) external{
-            require(balanceOf(msg.sender) >= amount, "Sorry, only owner can mint tokens.");
-            approve(msg.sender, amount);
-            transferFrom(msg.sender, _reciever, amount);
+        else if(_ch ==2){
+            require(balanceOf(msg.sender) >= 600, "Oops! Insufficient Tokens");
+            _burn(msg.sender, 600);
+            purchases[msg.sender].push("AKM SKIN");
         }
 
-        // Game Store Items
-        function gameShop() public pure returns(string memory) {
-            return "1. Conqueror Tag = 800 Tokens\n 2. Ace Tag = 600 Tokens\n 3. Crown Tag = 250 Tokens\n 4. Diamond Tag = 175 Tokens";
+        else if(_ch == 3){
+            require(balanceOf(msg.sender) >= 250, "Oops! Insufficient Tokens");
+            _burn(msg.sender, 250);
+            purchases[msg.sender].push("UMP45 SKIN");
         }
 
-        // Function to redeem tokens
-        function reedemTokens(uint choice) external payable{
-            require(choice<=4,"Invalid Choice");
-
-            if(choice ==1){
-                require(balanceOf(msg.sender)>=800, "Insufficient Tokens");
-                approve(msg.sender, 800);
-                transferFrom(msg.sender, owner(), 800);
-            }
-            else if(choice ==2){
-                require(balanceOf(msg.sender) >= 600, "Insufficient Tokens");
-                approve(msg.sender, 600);
-                transferFrom(msg.sender, owner(), 600);
-            }
-
-            else if(choice == 3){
-                require(balanceOf(msg.sender) >= 250, "Insufficient Tokens");
-                approve(msg.sender, 250);
-                transferFrom(msg.sender, owner(), 250);
-            }
-
-            else{
-                require(balanceOf(msg.sender) >= 175, "Insufficient Tokens");
-                approve(msg.sender, 175);
-                transferFrom(msg.sender, owner(), 175);
-            }
+        else{
+            require(balanceOf(msg.sender) >= 175, "Oops! Insufficient Tokens");
+            _burn(msg.sender, 175);
+            purchases[msg.sender].push("MYTHIC OUTFIT");
         }
 
-        // Function to check token balance
-        function checkTokenBalance() external view returns(uint){
-           return balanceOf(msg.sender);
-        }
+    }
 
-        // Function to burn tokens
-        function burnTokens(uint amount) external{
-            require(balanceOf(msg.sender)>= amount, "You don't have enough tokens!");
-            _burn(msg.sender, amount);
-        }
+    function myPurchases() public view returns (string[] memory, uint256){
+        uint256 length = purchases[msg.sender].length;
+        require(length > 0, "No purchases found for this address");
+        return (purchases[msg.sender], length);
+    }
+    
+    // Transfer Tokens Function
+    function transferTokens(address _reciever, uint _tokens) external{
+        require(balanceOf(msg.sender) >= _tokens, "Sorry, not enough balance in wallet.");
+        transfer(_reciever, _tokens);
+    }
+
+    // Function to check token balance
+    function checkTokenBalance() external view returns(uint){
+        return balanceOf(msg.sender);
+    }
+
+    // Function to burn tokens
+    function burnTokens(uint _tokens) external{
+        require(balanceOf(msg.sender)>= _tokens, "You don't have enough tokens!");
+        _burn(msg.sender, _tokens);
+    }
 
 }
