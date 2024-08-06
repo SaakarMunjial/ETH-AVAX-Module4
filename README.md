@@ -26,6 +26,6 @@ Make sure you've switched to the `AVALANCHE FUJI-C Chain network on Metamask. (r
 
 ## Authors
 
-This contract is created by `UDIT GUPTA` with the help of `METACRAFTERS Team`.
+This contract is created by `Saakar Munjial` with the help of `METACRAFTERS Team`.
 
 
